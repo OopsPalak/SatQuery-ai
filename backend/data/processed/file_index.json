@@ -1,0 +1,59 @@
+{
+  "file_43bb9c6c32eb": {
+    "path": "/home/claude/satquery-ai/backend/data/uploads/file_43bb9c6c32eb_scene_urban.png",
+    "file_id": "file_43bb9c6c32eb",
+    "filename": "scene_urban.png",
+    "format": "PNG",
+    "width": 64,
+    "height": 64,
+    "bands": 3,
+    "crs": "EPSG:4326 (assumed)",
+    "resolution": "10.0 m/px (assumed)",
+    "acquisition_date": null,
+    "modality": "optical",
+    "region_hint": "urban",
+    "thumbnail_url": "/processed/file_43bb9c6c32eb_preview.png",
+    "validation": {
+      "valid": true,
+      "message": "Input validated successfully"
+    }
+  },
+  "file_da5acbda8420": {
+    "path": "/home/claude/satquery-ai/backend/data/uploads/file_da5acbda8420_scene_urban.png",
+    "file_id": "file_da5acbda8420",
+    "filename": "scene_urban.png",
+    "format": "PNG",
+    "width": 64,
+    "height": 64,
+    "bands": 3,
+    "crs": "EPSG:4326 (assumed)",
+    "resolution": "10.0 m/px (assumed)",
+    "acquisition_date": null,
+    "modality": "optical",
+    "region_hint": "urban",
+    "thumbnail_url": "/processed/file_da5acbda8420_preview.png",
+    "validation": {
+      "valid": true,
+      "message": "Input validated successfully"
+    }
+  },
+  "file_1f0de51e682b": {
+    "path": "/home/claude/satquery-ai/backend/data/uploads/file_1f0de51e682b_scene_agri.png",
+    "file_id": "file_1f0de51e682b",
+    "filename": "scene_agri.png",
+    "format": "PNG",
+    "width": 64,
+    "height": 64,
+    "bands": 3,
+    "crs": "EPSG:4326 (assumed)",
+    "resolution": "10.0 m/px (assumed)",
+    "acquisition_date": null,
+    "modality": "optical",
+    "region_hint": "agricultural",
+    "thumbnail_url": "/processed/file_1f0de51e682b_preview.png",
+    "validation": {
+      "valid": true,
+      "message": "Input validated successfully"
+    }
+  }
+}

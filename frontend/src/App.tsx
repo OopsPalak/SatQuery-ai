@@ -21,7 +21,7 @@ function Workspace({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/dashboard" element={<Workspace><Dashboard /></Workspace>} />
       <Route path="/analysis" element={<Workspace><Analysis /></Workspace>} />
       <Route path="/history" element={<Workspace><History /></Workspace>} />
