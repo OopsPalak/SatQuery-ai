@@ -28,14 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="font-mono font-bold text-cyan-400 tracking-wider">SatQuery AI</span>
         </div>
         
-        <div className="hidden sm:flex items-center gap-2 text-slate-400 border-l border-[#1e2d4a] pl-3">
-          <span className="font-mono text-[11px] bg-slate-800/80 px-1.5 py-0.5 rounded-[2px] text-slate-300 border border-slate-700">
-            ISRO / SIH26167
-          </span>
-          <span className="hidden md:inline text-[11px] text-slate-300 font-sans">
-            Satellite Assistant for Everyone
-          </span>
-        </div>
+        <div className="hidden sm:flex items-center gap-2 text-slate-400 border-l border-[#1e2d4a] pl-3" />
       </div>
 
       {/* Active Dataset Quick Identifier */}
