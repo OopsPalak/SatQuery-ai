@@ -9,6 +9,7 @@ import { DatasetSelector } from './components/DatasetSelector';
 import type { DatasetItem, ViewModality, VLMQueryMessage, GroundingEvidence } from './types/remoteSensing';
 import { SAMPLE_DATASETS } from './data/sampleDatasets';
 import { processVlmQuery } from './utils/analyticalEngine';
+import { analyzeSatelliteQuery } from './services/api';
 
 export function App() {
   const [, setAllDatasets] = useState<DatasetItem[]>(SAMPLE_DATASETS);
@@ -27,25 +28,52 @@ export function App() {
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
   const [isDatasetSelectorOpen, setIsDatasetSelectorOpen] = useState<boolean>(false);
 
-  // Initialize dataset with a default VLM greeting query
+  // Initialize dataset with default query, prioritizing the FastAPI backend
   useEffect(() => {
+    let isCancelled = false;
     const initialQuery = activeDataset.presetQueries[0];
-    const initialResp = processVlmQuery(initialQuery, activeDataset);
-    
-    setMessages([
-      {
-        id: 'msg-init-user',
-        sender: 'user',
-        timestamp: initialResp.timestamp,
-        text: initialQuery
-      },
-      initialResp
-    ]);
-    setActiveEvidence(initialResp.evidence || activeDataset.groundTruthObjects);
-    setSelectedAuditMessage(initialResp);
+    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+
+    const userGreeting: VLMQueryMessage = {
+      id: 'msg-init-user',
+      sender: 'user',
+      timestamp,
+      text: initialQuery
+    };
+
+    setMessages([userGreeting]);
+    setIsProcessing(true);
+
+    analyzeSatelliteQuery(initialQuery, activeDataset)
+      .then((resp) => {
+        if (!isCancelled) {
+          setMessages([userGreeting, resp]);
+          setActiveEvidence(resp.evidence || activeDataset.groundTruthObjects);
+          setSelectedAuditMessage(resp);
+        }
+      })
+      .catch((err) => {
+        if (!isCancelled) {
+          console.warn('[SatQuery] Backend not reachable, using local preview mode:', err);
+          const localResp = processVlmQuery(initialQuery, activeDataset);
+          localResp.text = `[Local Mode] ${localResp.text}`;
+          setMessages([userGreeting, localResp]);
+          setActiveEvidence(localResp.evidence || activeDataset.groundTruthObjects);
+          setSelectedAuditMessage(localResp);
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setIsProcessing(false);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
   }, [activeDataset]);
 
-  const handleSendQuery = (queryText: string) => {
+  const handleSendQuery = async (queryText: string) => {
     setIsProcessing(true);
 
     const userMsg: VLMQueryMessage = {
@@ -57,14 +85,22 @@ export function App() {
 
     setMessages(prev => [...prev, userMsg]);
 
-    // Simulate realistic VLM inference delay (600ms)
-    setTimeout(() => {
-      const response = processVlmQuery(queryText, activeDataset);
+    try {
+      // Execute query against FastAPI backend (/api/analyze)
+      const response = await analyzeSatelliteQuery(queryText, activeDataset);
       setMessages(prev => [...prev, response]);
       setActiveEvidence(response.evidence || activeDataset.groundTruthObjects);
       setSelectedAuditMessage(response);
+    } catch (err) {
+      console.warn('[SatQuery] Backend query failed, using local demo engine:', err);
+      const fallbackResp = processVlmQuery(queryText, activeDataset);
+      fallbackResp.text = `[Local Mode - Backend Offline] ${fallbackResp.text}`;
+      setMessages(prev => [...prev, fallbackResp]);
+      setActiveEvidence(fallbackResp.evidence || activeDataset.groundTruthObjects);
+      setSelectedAuditMessage(fallbackResp);
+    } finally {
       setIsProcessing(false);
-    }, 600);
+    }
   };
 
   const handleSelectDataset = (dataset: DatasetItem) => {
